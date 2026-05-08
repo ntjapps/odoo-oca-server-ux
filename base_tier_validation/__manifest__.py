@@ -1,9 +1,10 @@
 # Copyright 2017-24 ForgeFlow S.L. (https://www.forgeflow.com)
+# Copyright 2026 NTJ (https://www.ntj.co.id)
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 {
     "name": "Base Tier Validation",
     "summary": "Implement a validation process based on tiers.",
-    "version": "18.0.3.4.0",
+    "version": "19.0.1.0.0",
     "development_status": "Mature",
     "maintainers": ["LoisRForgeFlow"],
     "category": "Tools",
