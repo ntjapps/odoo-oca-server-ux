@@ -231,7 +231,7 @@
                     name="reviewer"
                     domain="[('correction_type', '=', 'reviewer')]"
                 />
-                <group string="Group By">
+                <group>
                     <filter
                         string="Correction Type"
                         name="correction_type"
