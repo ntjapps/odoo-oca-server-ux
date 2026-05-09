@@ -112,8 +112,8 @@ class Announcement(models.Model):
             announcement.allowed_user_ids = announcement.specific_user_ids
             announcement.allowed_users_count = len(announcement.specific_user_ids)
         for announcement in self - specific_user_announcements:
-            announcement.allowed_user_ids = announcement.user_group_ids.users
-            announcement.allowed_users_count = len(announcement.user_group_ids.users)
+            announcement.allowed_user_ids = announcement.user_group_ids.user_ids
+            announcement.allowed_users_count = len(announcement.user_group_ids.user_ids)
 
     @api.depends("is_general_announcement")
     def _compute_user_group_ids(self):

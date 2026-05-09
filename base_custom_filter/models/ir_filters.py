@@ -55,7 +55,6 @@ class IrFilters(models.Model):
         )
 
     @api.model
-    @api.returns("self")
     def search(self, domain, offset=0, limit=None, order=None):
         if self.env.context.get("filter_type"):
             domain = expression.AND(
