@@ -1,6 +1,7 @@
 # Copyright 2024 Quartile (https://www.quartile.co)
 # Copyright 2026 NTJ (https://www.ntj.co.id)
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+# v19-incompat: Removed in v19: QwebTracker.wrap_render method no longer exists.
 {
     "name": "Template Content Swapper",
     "version": "19.0.1.0.0",
@@ -14,5 +15,5 @@
         "views/template_content_mapping_views.xml",
     ],
     "maintainers": ["yostashiro", "AungKoKoLin1997"],
-    "installable": True,
+    "installable": False,
 }
