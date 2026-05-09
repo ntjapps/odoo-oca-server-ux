@@ -9,7 +9,7 @@
     </record>
     <record model="res.users" id="base.user_root">
         <field
-            name="groups_id"
+            name="group_ids"
             eval="[(4,ref('document_quick_access_folder_auto_classification.group_missing_document'))]"
         />
     </record>
