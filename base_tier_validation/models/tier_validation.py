@@ -9,6 +9,7 @@ from psycopg2.extensions import AsIs
 
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError
+from odoo.orm.identifiers import NewId
 from odoo.tools import SQL
 from odoo.tools.misc import frozendict
 
@@ -248,7 +249,7 @@ class TierValidation(models.AbstractModel):
 
     def _compute_need_validation(self):
         for rec in self:
-            if isinstance(rec.id, models.NewId):
+            if isinstance(rec.id, NewId):
                 rec.need_validation = False
                 continue
             tiers = (

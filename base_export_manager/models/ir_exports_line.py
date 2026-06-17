@@ -4,6 +4,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import _, api, exceptions, fields, models
+from odoo.orm.identifiers import NewId
 
 
 class IrExportsLine(models.Model):
@@ -160,7 +161,7 @@ class IrExportsLine(models.Model):
                     _("Field '%s' does not exist") % one.name
                 )
             num_lines = 0
-            if one.export_id and not isinstance(one.export_id.id, models.NewId):
+            if one.export_id and not isinstance(one.export_id.id, NewId):
                 num_lines = one.search_count(
                     [("export_id", "=", one.export_id.id), ("name", "=", one.name)]
                 )
