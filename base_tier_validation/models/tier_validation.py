@@ -522,7 +522,14 @@ class TierValidation(models.AbstractModel):
 
     def _validate_tier(self, tiers=False):
         self.ensure_one()
-        tier_reviews = tiers or self.review_ids
+        # `tiers=False` is the "no argument given" sentinel (matches the
+        # default value), not "an explicitly empty recordset". `tiers or
+        # self.review_ids` used to conflate the two, since an empty
+        # recordset is also falsy: a caller passing an explicit empty
+        # recordset (meaning "nothing to do") would silently fall back to
+        # *all* reviews instead. Compare against the sentinel with `is` so
+        # an explicit empty recordset is honoured as empty.
+        tier_reviews = self.review_ids if tiers is False else tiers
         waiting_reviews = tier_reviews.filtered(
             lambda r: r.status == "waiting"
             or r.approve_sequence_bypass
@@ -631,6 +638,21 @@ class TierValidation(models.AbstractModel):
         reviews = self.review_ids.filtered(
             lambda x: x.sequence in sequences or x.approve_sequence_bypass
         )
+        if not reviews:
+            # The "Validate" button is only shown when `can_review` is True,
+            # which is derived from the same `_get_sequences_to_approve`
+            # call above, so this should be unreachable through normal UI
+            # use. It can still happen on a stale form (e.g. another
+            # reviewer already actioned this record between render and
+            # click). Tell the user explicitly rather than silently doing
+            # nothing, which would look like the button is broken.
+            raise ValidationError(
+                self.env._(
+                    "There is nothing for you to validate on this record. "
+                    "It may have already been validated or rejected by "
+                    "another reviewer; please refresh and check again."
+                )
+            )
         if self.has_comment:
             user_reviews = reviews.filtered(
                 lambda r: r.status == "pending" and (self.env.user in r.reviewer_ids)
@@ -643,6 +665,15 @@ class TierValidation(models.AbstractModel):
         self.ensure_one()
         sequences = self._get_sequences_to_approve(self.env.user)
         reviews = self.review_ids.filtered(lambda x: x.sequence in sequences)
+        if not reviews:
+            # See the matching comment in `validate_tier`.
+            raise ValidationError(
+                self.env._(
+                    "There is nothing for you to reject on this record. "
+                    "It may have already been validated or rejected by "
+                    "another reviewer; please refresh and check again."
+                )
+            )
         if self.has_comment:
             return self._add_comment("reject", reviews)
         self._rejected_tier(reviews)
@@ -672,7 +703,11 @@ class TierValidation(models.AbstractModel):
 
     def _rejected_tier(self, tiers=False):
         self.ensure_one()
-        tier_reviews = tiers or self.review_ids
+        # See the matching comment in `_validate_tier`: `tiers=False` is the
+        # "no argument given" sentinel, not "an explicitly empty
+        # recordset". Compare with `is` so an explicit empty recordset
+        # doesn't fall back to (and reject) every review.
+        tier_reviews = self.review_ids if tiers is False else tiers
         user_reviews = tier_reviews.filtered(
             lambda r: r.status in ("waiting", "pending")
             and self.env.user in r.reviewer_ids
